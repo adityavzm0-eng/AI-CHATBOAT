@@ -1,16 +1,21 @@
+import os
+
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 
 load_dotenv()
 
-from chatboat import get_ai_response
+try:
+    from .chatboat import get_ai_response
+except ImportError:
+    from chatboat import get_ai_response
 
 app = Flask(__name__)
 
 
 @app.after_request
 def add_cors_headers(response):
-    response.headers["Access-Control-Allow-Origin"] = "http://127.0.0.1:5173"
+    response.headers["Access-Control-Allow-Origin"] = os.getenv("FRONTEND_ORIGIN", "http://127.0.0.1:5173")
     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
     return response
 
@@ -39,4 +44,4 @@ def chat():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=os.getenv("FLASK_DEBUG", "0") == "1")

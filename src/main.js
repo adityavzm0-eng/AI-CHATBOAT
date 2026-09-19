@@ -1,5 +1,7 @@
 import './style.css'
 
+const API_BASE_URL = (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://127.0.0.1:5000' : '')).replace(/\/$/, '')
+
 const promptItems = [
   ['Plan a project', 'Turn a loose idea into clear next steps.'],
   ['Explain a concept', 'Make something complicated feel simple.'],
@@ -42,7 +44,7 @@ async function sendMessage(text) {
   input.value = ''
   input.style.height = 'auto'
   try {
-    const response = await fetch('http://127.0.0.1:5000/chat', {
+    const response = await fetch(`${API_BASE_URL}/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: cleanText }),

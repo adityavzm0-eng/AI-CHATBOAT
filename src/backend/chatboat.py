@@ -1,6 +1,10 @@
 import os
 from google import genai
-from rag import retrieve_context
+
+try:
+    from .rag import retrieve_context
+except ImportError:
+    from rag import retrieve_context
 
 client = genai.Client(
     api_key=os.getenv("GEMINI_API_KEY")
