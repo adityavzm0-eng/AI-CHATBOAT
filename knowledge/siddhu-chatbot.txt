@@ -1,0 +1,5 @@
+Siddhu's Chatbot is a personal AI assistant built with a Flask backend, a Vite frontend, and the Gemini language model. It is designed to help users think, write, learn, and plan.
+
+The chatbot frontend is a chat-only blue interface. Users type a message in the composer and receive a response from the Flask /chat endpoint.
+
+The chatbot uses a local retrieval-augmented generation flow. Text files in the knowledge folder are searched for relevant paragraphs before the retrieved context is sent to Gemini. Answers should use retrieved context when it is relevant and clearly say when the documents do not contain an answer.
