@@ -2,24 +2,14 @@ import './style.css'
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://127.0.0.1:5000' : '')).replace(/\/$/, '')
 
-const promptItems = [
-  ['Plan a project', 'Turn a loose idea into clear next steps.'],
-  ['Explain a concept', 'Make something complicated feel simple.'],
-  ['Write something', 'Draft an email, post, or polished copy.'],
-]
-
 document.querySelector('#app').innerHTML = `
   <div class="app-shell">
     <main class="main-panel" id="chat">
       <header class="topbar"><div class="brand"><span class="brand-mark">S</span><span>Siddhu's <strong>Chatbot</strong></span></div><span class="status"><i></i> Online</span></header>
       <section class="chat-content">
         <div class="welcome">
-          <p class="eyebrow">YOUR AI ASSISTANT <span></span> READY TO HELP</p>
-          <h1>What can I help<br>you with<span>?</span></h1>
-          <p class="intro">Ask anything, explore ideas, or get help with your next big task.</p>
-        </div>
-        <div class="prompt-grid" id="prompt-grid">
-          ${promptItems.map(([title, copy], index) => `<button class="prompt-card" data-prompt="${title}"><span class="prompt-number">0${index + 1}</span><strong>${title}</strong><small>${copy}</small><span class="arrow">↗</span></button>`).join('')}
+          <p class="eyebrow">PRIVATE CHAT <span></span> READY</p>
+          <h1>How can I help<span>?</span></h1>
         </div>
         <div class="conversation-space" id="conversation-space"></div>
         <form class="composer" id="composer">
@@ -38,9 +28,8 @@ const conversation = document.querySelector('#conversation-space')
 async function sendMessage(text) {
   const cleanText = text.trim()
   if (!cleanText) return
-  document.querySelector('#prompt-grid').classList.add('is-hidden')
   const safeText = cleanText.replace(/[<>&]/g, (char) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[char]))
-  conversation.insertAdjacentHTML('beforeend', `<div class="message user-message"><span class="avatar">AK</span><p>${safeText}</p></div><div class="message bot-message" id="pending-response"><span class="bot-dot">S</span><p>Thinking...</p></div>`)
+  conversation.insertAdjacentHTML('beforeend', `<div class="message user-message"><span class="avatar">BS</span><p>${safeText}</p></div><div class="message bot-message" id="pending-response"><span class="bot-dot">S</span><p>Thinking...</p></div>`)
   input.value = ''
   input.style.height = 'auto'
   try {
@@ -53,7 +42,7 @@ async function sendMessage(text) {
     if (!response.ok) throw new Error(data.error || 'Request failed')
     document.querySelector('#pending-response p').textContent = data.response
   } catch (error) {
-    document.querySelector('#pending-response p').textContent = 'The local backend is not connected yet. Start Flask and try again.'
+    document.querySelector('#pending-response p').textContent = error.message || 'The chat service is unavailable. Start the backend and try again.'
   } finally {
     document.querySelector('#pending-response')?.removeAttribute('id')
   }
@@ -63,5 +52,4 @@ async function sendMessage(text) {
 document.querySelector('#composer').addEventListener('submit', (event) => { event.preventDefault(); sendMessage(input.value) })
 input.addEventListener('input', () => { input.style.height = 'auto'; input.style.height = `${Math.min(input.scrollHeight, 140)}px` })
 input.addEventListener('keydown', (event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(input.value) } })
-document.querySelectorAll('[data-prompt]').forEach((button) => button.addEventListener('click', () => { input.value = `${button.dataset.prompt}: `; input.focus() }))
-document.querySelector('.brand').addEventListener('click', () => { conversation.innerHTML = ''; document.querySelector('#prompt-grid').classList.remove('is-hidden'); input.value = ''; input.focus() })
+document.querySelector('.brand').addEventListener('click', () => { conversation.innerHTML = ''; input.value = ''; input.focus() })
